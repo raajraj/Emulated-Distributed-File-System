@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>MySQL File system</title>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster&effect=shadow-multiple" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+
+<body>
+  <div class="heading-firebase">
+    <h2>MySQL File System</h2>
+  </div>
+
+  <p></p>
+
+  <div class="displayMessage" style="padding-top: 50px">
+    <h3>File Operations <sup><a class="type" href="{{ url_for('explanation') }}"> <i class="fa-solid fa-question"></i> </a></sup></h3>
+  </div>
+
+  <div class="container">
+    <div class="toolbar" style="padding-top: 50px">
+      <!-- MKDIR - New Folder Button -->
+      <button id="mkdirBtn" type="button" title="mkdir" value="New Folder" class="btn btn-primary" data-toggle="tooltip"
+        data-container="body">
+        <i class="fa-solid fa-folder-plus"></i> New Folder
+      </button>
+
+      <!-- CAT - Open File Button   -->
+      <!-- <button id="openFileBtn" type="button" title="cat" class="btn btn-success" data-toggle="tooltip"
+        data-container="body">
+        <i class="fas fa-file"></i>
+        <span>Open File</span>
+      </button> -->
+
+      <!-- RM - Delete Button   -->
+      <!-- <button id="deleteBtn" type="button" title="rm" class="btn btn-danger" data-toggle="tooltip"
+        data-container="body">
+        <i class="fas fa-trash"></i>
+        <span>Delete</span>
+      </button> -->
+
+      <!-- PUT - Upload File Button   -->
+      <button id="uploadFileBlock" type="button" class="btn btn-primary" title="put" data-toggle="tooltip"
+        data-container="body" style="background-color: #1c98ad; border-color: #1c98ad">
+        <i class="fa-solid fa-upload"></i> Upload
+      </button>
+
+
+      <!-- SEARCH BAR -->
+      <!-- <div class="input-group" style="width: 325px; margin-left: auto">
+        <input id="searchField" type="text" class="form-control" placeholder="Search" style="height: 41px" />
+        <button id="searchBtn" class="btn btn-outline-secondary" type="button">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div> -->
+    </div>
+
+    <!-- INPUT TEXTAREA on mkdir button click -->
+    <div id="inputFolderName" class="mb-4">
+      <div class="input-group">
+        <input id="newFolderName" type="text" class="form-control" placeholder="Enter the path"
+          aria-label="Enter the path" />
+        <button id="createFolderBtn" class="btn btn-outline-secondary" type="button">
+          Create
+        </button>
+      </div>
+    </div>
+
+    <div id="fileUploader">
+      <form id="uploadFileForm" action="#" enctype="multipart/form-data">
+        <div class="input-group">
+          <input id="uploadFilePartInput" type="number" class="form-control" placeholder="Enter number of partitions">
+          <input id="uploadFilePathInput" type="text" class="form-control" placeholder="Enter the file path"
+            aria-label="Enter the file path" />
+          <input type="file" name="file" id="uploadFile" class="form-control" />
+          <button id="uploadWholeFileBtn" class="btn btn-outline-success" type="submit">
+            Upload
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="explorer rounded bg-light">
+      <div class="row p-4">
+        <div class="col">
+          <h3 class="text-center text-capitalize">File explorer</h3>
+        </div>
+      </div>
+      <div class="row gx-0 p-4">
+        <div class="col-12 mb-3">
+          <div class="d-flex flex-row" style="gap: 8px;">
+            <input class="form-control" type="text" name="lspath" id="lsPathInput"
+              placeholder="Enter path to use with ls">
+            <button id="lsPathInputBtn" class="btn btn-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </div>
+        </div>
+        <div class="col-12 mb-3">
+          <div class="tree bg-white p-4">
+            <ul id="explorerList">
+              <li class="text-center d-block text-secondary">Enter a path and click on the search button</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-12 mt-5 mb-3">
+          <div class="input-group">
+            <input id="filePathInput" type="text" class="form-control" placeholder="Enter a file path"
+              aria-label="Enter a file path">
+            <button id="openBtn" class="btn btn-outline-success" type="button">Open</button>
+            <button id="deleteBtn" class="btn btn-outline-danger" type="button">Delete</button>
+          </div>
+        </div>
+        <div id="file-details" class="col-12" style="background-color: aliceblue">
+          <div class="p-4">
+            <nav class="d-flex flex-row justify-content-center">
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="file-content-tab" data-bs-toggle="tab" data-bs-target="#fileContent"
+                  type="button" role="tab" aria-controls="fileContent" aria-selected="true">
+                  FILE CONTENT
+                </button>
+                <button class="nav-link" id="file-information-tab" data-bs-toggle="tab"
+                  data-bs-target="#file-information" type="button" role="tab" aria-controls="file-information"
+                  aria-selected="false">
+                  INFORMATION
+                </button>
+              </div>
+            </nav>
+            <div class="tab-content mt-3" id="nav-tabContent">
+              <div class="tab-pane show active overflow-auto flex-column justify-content-center align-items-center"
+                id="fileContent" role="tabpanel" aria-labelledby="file-home-tab" style="height: 430px">
+                <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+                  <p>Select a File and Click Open</p>
+                </div>
+              </div>
+              <div class="tab-pane" id="file-information" role="tabpanel"
+                aria-labelledby="file-information-tab">
+                <table class="table table-stripped">
+                  <thead>
+                    <th>Partition</th>
+                    <th>Partition Path</th>
+                  </thead>
+                  <tbody id="partitionsBody">
+                  </tbody>
+                </table>
+                <div class="d-flex flex-row mt-5" style="gap: 8px;">
+                  <hr>
+                  <input class="form-control" type="text" name="partitionPathNo" id="partitionPathNoInput"
+                    placeholder="Enter partition number to read">
+                  <input type="hidden" value="" id="partitionPathHidden">
+                  <button id="partitionPathInputBtn" class="btn btn-secondary"><i
+                      class="fa-brands fa-readme"></i></button>
+                </div>
+                <div id="partitionContent" class="mt-5 overflow-auto" style="max-height: 240px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explorer rounded bg-light">
+      <div class="row p-4">
+        <div class="col">
+          <h3 class="text-center text-capitalize">Search</h3>
+        </div>
+      </div>
+      <div class="row gx-0 p-4">
+        <div class="col-6 pe-4">
+          <div class="accordion accordion-flush" id="search-accordion">
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="search-one">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#search-collapse-one" aria-expanded="false" aria-controls="search-collapse-one">
+                  Find the number of deaths per country
+                </button>
+              </h5>
+              <div id="search-collapse-one" class="accordion-collapse collapse" aria-labelledby="search-one">
+                <div class="accordion-body">
+
+                  <form id="searchDeathPerCountryForm" action="#">
+                    <div class="mb-3">
+                      <label for="disease">Choose a disease:</label>
+                      <select class="form-select" name="dataset" id="dataset">
+                        <option value="--">--- Select a disease ---</option>
+                        <option value="covid">COVID-19</option>
+                        <option value="ebola">EBOLA</option>
+                        <option value="sars">SARS</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="country">Choose a country:</label>
+                      </br>                      
+                      <select class="form-select" name="country" id="country">
+                        <option value="--">--- Select a country ---</option>
+                        <option value="Afghanistan">Afghanistan</option>
+                        <option value="Albania">Albania</option>
+                        <option value="Algeria">Algeria</option>
+                        <option value="Andorra">Andorra</option>
+                        <option value="Angola">Angola</option>
+                        <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                        <option value="Argentina">Argentina</option>
+                        <option value="Armenia">Armenia</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Austria">Austria</option>
+                        <option value="Azerbaijan">Azerbaijan</option>
+                        <option value="Bahamas">Bahamas</option>
+                        <option value="Bahrain">Bahrain</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="Barbados">Barbados</option>
+                        <option value="Belarus">Belarus</option>
+                        <option value="Belgium">Belgium</option>
+                        <option value="Benin">Benin</option>
+                        <option value="Bhutan">Bhutan</option>
+                        <option value="Bolivia">Bolivia</option>
+                        <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                        <option value="Brazil">Brazil</option>
+                        <option value="Brunei">Brunei</option>
+                        <option value="Bulgaria">Bulgaria</option>
+                        <option value="Burkina Faso">Burkina Faso</option>
+                        <option value="Burma">Burma</option>
+
+                        <option value="Cabo Verde">Cabo Verde</option>
+                        <option value="Cambodia">Cambodia</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Canada">Canada</option>
+                        <option value="China">China</option>
+                        <option value="Comoros">Comoros</option>
+                        <option value="Colombia">Colombia</option>
+
+                        <option value="France">France</option>
+                        <option value="Finland">Finland</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Hong Kong SAR, China">Hong Kong SAR, China</option>
+
+                        <option value="India">India</option>
+                        <option value="Italy">Italy</option>
+                        <option value="Indonesia">Indonesia</option>
+
+                        <option value="Japan">Japan</option>
+
+                        <option value="Kosovo">Kosovo</option>
+                        <option value="Kuwait">Kuwait</option>
+
+                        <option value="Lesotho">Lesotho</option>
+
+                        <option value="Malaysia">Malaysia</option>
+                        <option value="Mongolia">Mongolia</option>
+                        <option value="Macao SAR, China">Macao SAR, China</option>
+
+                        <option value="New Zealand">New Zealand</option>
+
+                        <option value="Poland">Poland</option>
+                        <option value="Philippines">Philippines</option>
+
+
+                        <option value="Republic of Ireland">Republic of Ireland</option>
+                        <option value="Romania">Romania</option>
+                        <option value="Russian Federation">Russian Federation</option>
+                        <option value="Republic of Korea">Republic of Korea</option>
+
+                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="South Sudan">South Sudan</option>
+                        <option value="Slovenia">Slovenia</option>
+                        <option value="Spain">Spain</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="Sweden">Sweden</option>
+
+
+                        <option value="Taiwan">Taiwan, China</option>
+                        <option value="Tajikistan">Tajikistan</option>
+                        <option value="Thailand">Thailand</option>
+
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="United States">United States</option>
+                        <option value="Viet Nam">Viet Nam</option>
+
+                        <option value="Western Sahara">Western Sahara</option>
+                        <option value="Yemen">Yemen</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <input type="submit" value="Submit" />
+                    </div>
+                  </form>
+
+                  </br>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="search-two">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#flush-search-collapse-two" aria-expanded="false"
+                  aria-controls="flush-search-collapse-two">
+                  Find countries for the number of cases selected
+                </button>
+              </h2>
+              <div id="flush-search-collapse-two" class="accordion-collapse collapse" aria-labelledby="search-two">
+                <div class="accordion-body">
+
+                  <form id="searchNoOfCasesByCountryForm" action="#">
+                    <div class="mb-3">
+                      <label for="disease">Choose the disease:</label>
+                      <select class="form-select" name="dataset" id="dataset">
+                        <option value="covid">COVID-19</option>
+                        <option value="ebola">EBOLA</option>
+                        <option value="sars">SARS</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="country">Limit 1:</label>
+                      <input type="text" name="limit1" id="limit1" class="form-control" placeholder="Limit 1">
+                    </div>
+                    <div class="mb-3">
+                      <label for="country">Limit 2:</label>
+                      <input type="text" name="limit2" id="limit2" class="form-control" placeholder="Limit 2">
+                    </div>
+                    <div class="mb-3">
+                      <input type="submit" value="Submit" />
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6" style="background-color: rgb(238, 233, 243)">
+          <div class="p-4">
+            <div style="text-align: center; font-size: 20px; font-style:bold;">RESULT</div>
+            <div class="tab-content mt-3" id="nav-tabContent">
+              <div class="tab-pane show active overflow-auto" id="file-content" role="tabpanel"
+                aria-labelledby="file-home-tab" style="height: 200px">
+                <div id="searchResult"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explorer rounded bg-light">
+      <div class="row p-4">
+        <div class="col">
+          <h3 class="text-center text-capitalize">Analysis</h3>
+        </div>
+      </div>
+      <div class="row gx-0 p-4">
+        <div class="col-6 pe-4">
+          <div class="accordion accordion-flush d-grid gap-2" id="analysis-accordion">
+            <!-- Total number of deaths per country (per disease?) -->
+            <button id="deathByCountry" type="button" class="btn btn-primary btn-lg btn-block"
+              style="background-color: rgb(169, 117, 219); border-color: rgb(169, 117, 219) ; margin-top: 50px;">Total
+              Deaths per Country</button>
+            </br>
+            <!-- Average number of people recovered from the outbreak per disease. -->
+            <button id="avgRecoveredCases" type="button" class="btn btn-primary btn-lg btn-block"
+              style="background-color:rgb(237, 156, 70); border-color: rgb(237, 156, 70);">Average Number of
+              Recovered Cases</button>
+            </br></br>
+          </div>
+
+        </div>
+        <div class="col-6" style="background-color: rgb(231, 210, 220)">
+          <div class="p-4">
+            <div style="text-align: center; font-size: 20px; font-style:bold;">RESULT</div>
+            <div class="tab-content mt-3" id="nav-tabContent">
+              <div class="tab-pane show active overflow-auto" id="file-content" role="tabpanel"
+                aria-labelledby="file-home-tab" style="height: 200px">
+                <div id="analysisResult"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-5"></div>
+
+    <!-- <button id="ls" value="Submit"></button> -->
+    <!-- <div id="mkdir"></div> -->
+    <!-- <div id="cat"></div> -->
+    <div id="readParition"></div>
+    <div id="getpartitionLocations"></div>
+    <div id="put"></div>
+    <!-- <div id="rm"></div> -->
+    <!--
+  </div>
+
+  <div id="sample"></div>
+
+  <button id="ls" value="Submit"></button>
+  <div id="mkdir"></div>
+  <div id="cat"></div>
+  <div id="readParition"></div>
+  <div id="getpartitionLocations"></div>
+  <div id="put"></div>
+  <div id="rm"></div>
+
+  <footer class="p-2">
+    <p class="text-right"><small>Made by Laxmi Garde et al.</small></p>
+  </footer> -->
+
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+      integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+      crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+      crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+      integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"
+      integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"
+      integrity="sha512-0qU9M9jfqPw6FKkPafM3gy2CBAvUWnYVOfNPDYKVuRTel1PrciTj+a9P3loJB+j0QmN2Y0JYQmkBBS8W+mbezg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="{{ url_for('static', filename='mysql.js') }}"></script>
+
+
+    <script type="text/javascript">
+
+      var retrieved_response;
+
+      var searchBtn, searchField, createFolder;
+      var mkDirBtn = $("#mkdirBtn");
+      var newFolderName = $("#newFolderName");
+      var inputFolderName = $("#inputFolderName");
+      var createFolderBtn = $("#createFolderBtn");
+      var uploadFile = $("#uploadFile");
+      var fileUploader = $("#fileUploader");
+      var uploadFileBlock = $("#uploadFileBlock");
+      var uploadFilePartInput = $("#uploadFilePartInput");
+      var uploadFilePathInput = $("#uploadFilePathInput");
+      var uploadFileForm = $("#uploadFileForm");
+      var deleteBtn = $("#deleteBtn");
+      var openFileBtn = $("#openFileBtn");
+      var explorerList = $("#explorerList");
+      var lsPathInput = $("#lsPathInput");
+      var lsPathInputBtn = $("#lsPathInputBtn");
+      var filePathInput = $("#filePathInput");
+      var openBtn = $("#openBtn");
+      var deleteBtn = $("#deleteBtn");
+      var partitionPathNoInput = $("#partitionPathNoInput");
+      var partitionPathHidden = $("#partitionPathHidden");
+      var partitionPathInputBtn = $("#partitionPathInputBtn");
+
+      // Search
+      var searchDeathPerCountryForm = $("#searchDeathPerCountryForm");
+      var searchNoOfCasesByCountryForm = $("#searchNoOfCasesByCountryForm");
+      var searchResult = $("#searchResult");
+      
+      // Analysis
+      var deathByCountry = $("#deathByCountry");
+      var avgRecoveredCases = $("#avgRecoveredCases");
+      var analysisResult = $("#analysisResult");
+
+      $(function () {
+        init();
+        // mkdir button
+        mkDirBtn.click(function () {
+          newFolderName.val("");
+          inputFolderName.toggle();
+        });
+
+        // text bar create and dismiss
+        createFolderBtn.click(function () {
+          // TODO : API call here to create folder
+          mkdir(newFolderName.val());
+          // TODO : Refresh tree view on success.
+          inputFolderName.toggle();
+        });
+        uploadFileBlock.on("click", function () {
+          uploadFilePathInput.val("");
+          fileUploader.toggle();
+        });
+
+        uploadFile.on("change", function (event) {
+          console.log(event.target.files);
+          // TODO : upload files[0]
+          // TODO : Refresh Tree view on success else display alert message
+        });
+
+        lsPathInputBtn.on("click", function (event) {
+          var path = lsPathInput.val();
+          do_ls(path);
+        });
+
+        openBtn.on("click", function (event) {
+          var filePath = filePathInput.val();
+          cat(filePath);
+          partitionPathHidden.val(filePath);
+        });
+
+        deleteBtn.on("click", function (event) {
+          var filePath = filePathInput.val();
+          rm(filePath);
+        })
+
+        partitionPathInputBtn.on("click", function () {
+          readPartition(partitionPathHidden.val(), partitionPathNoInput.val());
+        });
+
+        uploadFileForm.on("submit", function (event) {
+          var payload = new FormData();
+          payload.append("file", uploadFile[0].files[0]);
+          payload.append("dirpath", uploadFilePathInput.val());
+          payload.append("numpart", uploadFilePartInput.val());
+          put(payload);
+          event.preventDefault();
+        });
+
+        searchDeathPerCountryForm.on("submit", function(event) {
+          var payload = Object.fromEntries(new FormData(document.getElementById('searchDeathPerCountryForm')));
+          searchDeathPerCountry(searchResult, payload);
+          event.preventDefault();
+        });
+
+        searchNoOfCasesByCountryForm.on("submit", function(event) {
+          var payload = Object.fromEntries(new FormData(document.getElementById("searchNoOfCasesByCountryForm")));
+          searchNoOfCasesByCountry(searchResult, payload);
+          event.preventDefault();
+        });
+
+
+        // Analysis
+        deathByCountry.on("click", function (event) {
+          deathByCountryFunc(analysisResult);
+        });
+
+        avgRecoveredCases.on("click", function (event) {
+          avgRecoveredCasesFunc(analysisResult);
+        });
+
+      });
+
+      // for adding button tooltips
+      function init() {
+        $('[data-toggle="tooltip"]').tooltip();
+        inputFolderName.toggle();
+        openFileBtn.prop("disabled", true);
+        fileUploader.toggle();
+        // List Init Explorer
+        // init_explorer();
+        // cat("/user/pappu/sars.csv");
+      }
+
+    </script>
+</body>
+
+</html>

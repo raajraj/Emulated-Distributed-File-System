@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Explanation Page</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster&effect=shadow-multiple">
+  
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+    crossorigin="anonymous"
+  />
+
+  </head>
+
+<body>
+
+  <div class="heading" style="background-color: #ebb3c8;">
+    <h3>Explanation Page</h3>
+    <h5>The page gives a description of all Application features available to the end users</h5>
+  </div>
+
+  <p></p>
+
+  <br></br>
+  <br></br>
+
+  <div>
+    <center><h4>Application Features</h4></center>
+  </div>
+
+</br></br>
+
+<div>
+
+  
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <table class="table table-striped table-hover" style="border:1px solid black;margin-left:auto;margin-right:auto;">
+          <thead>
+            <tr>
+              <th scope="col">Feature/Command</th>
+              <th scope="col">Feature Description</th>
+              <th scope="col">Feature Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>mkdir</td>
+              <td>Create a directory in the file system</td>
+              <td>Click on the 'New Folder' button and enter the directory to be created in the file system. The alert message informs the directory creation status to the users.</td>
+            </tr>
+            <tr>
+              
+              <td>ls</td>
+              <td>Listing contents of a given directory</td>
+              <td>In File Explorer section, enter the path of the directory and click on 'Search'. The files in that directory can be viewed below.</td>
+            </tr>
+            <tr>
+              <td>cat</td>
+              <td>Displays contents of a file</td>
+              <td>In File Explorer section, in the search bar enter the file path to be displayed, and click on 'Open' button. The file contents are displayed in the 'File Content' section below.</td>
+            </tr>
+            <tr>
+              <td>rm</td>
+              <td>Remove a file from the file system</td>
+              <td>In File Explorer section, in the search bar enter the file path to be deleted, and click on 'Delete' button.</td>
+            </tr>
+            <tr>
+              <td>put</td>
+              <td>Uploading a file to the file system</td>
+              <td>Click on the 'Upload' button and enter the file path, number of partitions, choose a file to upload from your local machine, and click on 'Upload' button. The alert message informs the upload status to the users.</td>
+            </tr>
+            <tr>
+              <td>getPartitionLocations(file)</td>
+              <td>Returns the locations of partitions of the file</td>
+              <td>In File Explorer section, in the search bar enter the file path and hit enter. The partition location details can be viewed on the Information section of the webpage.</td>
+            </tr>
+            <tr>
+              <td>readPartition(file, partition#)</td>
+              <td>Returns the content of partition # of the specified file</td>
+              <td>In the Information section that displays the partition location details, enter the number of the partition that you need to read. The partition contents are displayed below. </td>
+            </tr>
+            <tr>
+              <td>Search - Find the number of deaths per country</td>
+              <td>Allows users to search for the number of deaths per country for the selected disease</td>
+              <td>In the Search section, open 'Find the number of deaths per country' option and choose a disease and country. The 'Result' section displays the number of deaths.</td>
+            </tr>
+            <tr>
+              <td>Search - Find countries for the number of cases selected</td>
+              <td>Allows users to search for the countries that have number of cases between the range specified by the user.</td>
+              <td>In the Search section, open 'Find countries for the number of cases selected' option and choose the disease and enter the range in the input boxes provided. The 'Result' section displays the countries that have cases between the range entered by user. </td>
+            </tr>
+            <tr>
+              <td>Analysis - Total Deaths per Country</td>
+              <td>Returns the total number of deaths per country due to a specific disease.</td>
+              <td>In the Analysis section, click on the 'Total Deaths per Country' button to get an analysis on total deaths per country. The 'Result' section displays the output to the user. </td>
+            </tr>
+            <tr>
+              <td>Analysis - Average Number of Recovered cases</td>
+              <td>Returns the average number of recovered cases.</td>
+              <td>In the Analysis section, click on the 'Average Number of Recovered cases' button to get a detailed analysis. The 'Result' section displays the output to the user. </td>
+            </tr>
+
+            <tr>
+              <td>DSCI 551 Home Page - Firebase & MySQL</td>
+              <td>Home page comprises of Firebase and MySQL buttons to access the specific implementation.</td>
+              <td>Click on 'Firebase' to access Application Features implemented in Firebase. Click on 'MySSQL' to access Application Features implemented in MySQL. </td>
+            </tr>
+
+            
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  </body>
+
+  </html>

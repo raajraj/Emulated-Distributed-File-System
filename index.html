@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>DSCI 551 Project Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster&effect=shadow-multiple">
+  
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+    crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<body>
+
+  <div class="heading">
+    <h3>DSCI 551 Project</h3>
+    <h5>Designing Emulated Distributed File System for exploration of Outbreaks </br>
+      COVID 19, Ebola, and SARS</h5>
+  </div>
+
+  <p></p>
+
+  <div class="displayMessage">
+    <h5>Explore our App Features enabled by EDFS (Firebase and MySQL) by selecting one of the given options</h5>
+    <a class="btn btn-outline-success" class="type" href="{{ url_for('explanation') }}"> About Operations <i class="fa-solid fa-circle-info"></i> </a>
+  </div>
+
+  <p></p>
+
+  <div class="selectSection">
+
+    
+    <a class="type" href="{{ url_for('firebase') }}">
+      <button class="button" style="vertical-align:middle"><span>Firebase</span></button>
+    </a>
+
+    <a class="type" href="{{ url_for('mysql') }}">
+      <button class="button" style="vertical-align:middle"><span>MySQL</span></button>
+    </a>
+
+  </div>
+
+</div>
+
+
+  
+
+</body>
+
+</html>
